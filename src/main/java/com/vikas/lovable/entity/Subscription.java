@@ -12,7 +12,7 @@ import org.springframework.cglib.core.Local;
 import java.time.LocalDateTime;
 
 
-@Entity
+//@Entity
 @Getter
 @Setter
 @NoArgsConstructor
