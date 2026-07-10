@@ -24,7 +24,7 @@ public class FilesController {
 
     }
 
-    @GetMapping("/{*path}")
+    @GetMapping("/{*path}") // /src/lib/filename
     public ResponseEntity<FileContentResponse> getFile(
             @PathVariable
             Long projectId,
