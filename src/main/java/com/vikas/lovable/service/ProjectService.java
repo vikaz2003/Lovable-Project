@@ -16,5 +16,6 @@ public interface ProjectService {
 
     ProjectResponse createProject(ProjectRequest request, Long userId);
 
-    Void deleteProject(Long id, Long userId);
+
+    void deleteProject(Long id, Long userId);
 }
