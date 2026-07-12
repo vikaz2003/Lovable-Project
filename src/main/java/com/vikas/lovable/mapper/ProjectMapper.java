@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProjectMapper {
 
 
-    ProjectResponse toResponse(Project project);
+    ProjectResponse toProjectResponse(Project project);
 
     List<ProjectSummaryResponse> toProjectSummaryResponseList(List<Project> project);
 

@@ -14,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .owner(owner)
                 .build();
         project=projectRepository.save(project);
-        return projectMapper.toResponse(project);
+        return projectMapper.toProjectResponse(project);
     }
 
     @Override
@@ -44,18 +46,30 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectResponse getUserProjectById(Long userId, Long id) {
-        return null;
+        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow();
+        return projectMapper.toProjectResponse(project);
     }
 
     @Override
+    @Transactional
     public ProjectResponse updateProject(Long id, Long userId, ProjectRequest request) {
-        return null;
+        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow();
+        project.setName(request.name());
+        project=projectRepository.save(project);
+        return projectMapper.toProjectResponse(project);
     }
 
 
 
     @Override
-    public Void deleteProject(Long id, Long userId) {
-        return null;
+    @Transactional
+    public void deleteProject(Long id, Long userId) {
+        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow();
+        if(!Objects.equals(project.getOwner().getId(), userId)){
+            throw new RuntimeException("You are not allowed to delete");
+        }
+        project.setDeletedAt(LocalDateTime.now());
+        projectRepository.save(project);
+
     }
 }
