@@ -48,7 +48,7 @@ public class ProjectController {
     public ResponseEntity<Void> deleteProject(@PathVariable Long id){
         Long userId=1L;
         projectService.deleteProject(id,userId);
-        return ResponseEntity.noContent();
+        return ResponseEntity.noContent().build();
     }
 
 
