@@ -14,16 +14,19 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@Table(name = "projects",
+indexes = {
+        @Index(name = "idx_projects_updated_at_desc",columnList = "updated_at DESC,deleted_at"),
+        @Index(name = "idx_projects_deleted_at",columnList = "deleted_at"),
+        @Index(name="idx_projects_is_public",columnList = "is_public")
+}
+)
 public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @ManyToOne
-    @JoinColumn(name = "owner_id",nullable = false)
-    private User owner;
 
     @Column(nullable = false)
     private String name;
@@ -38,5 +41,5 @@ public class Project {
     private LocalDateTime updatedAt;
 
 
-    private LocalDateTime deletedAt;
+    private LocalDateTime deletedAt; // soft delete
 }

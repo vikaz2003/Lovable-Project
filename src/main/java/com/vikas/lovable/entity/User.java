@@ -22,15 +22,15 @@ public class User  {
     private Long id;
 
     @Column(nullable = false)
-    private String email;
+    private String username;
 
 
-    private String passwordHash;
+    private String password;
 
     private String name;
 
 
-    private String avatarUrl;
+
 
     @CreationTimestamp
     private LocalDateTime createdAt;

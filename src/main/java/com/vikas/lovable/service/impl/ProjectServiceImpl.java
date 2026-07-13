@@ -4,9 +4,13 @@ import com.vikas.lovable.dto.project.ProjectRequest;
 import com.vikas.lovable.dto.project.ProjectResponse;
 import com.vikas.lovable.dto.project.ProjectSummaryResponse;
 import com.vikas.lovable.entity.Project;
+import com.vikas.lovable.entity.ProjectMember;
+import com.vikas.lovable.entity.ProjectMemberId;
 import com.vikas.lovable.entity.User;
+import com.vikas.lovable.enums.ProjectRole;
 import com.vikas.lovable.error.ResourceNotFoundException;
 import com.vikas.lovable.mapper.ProjectMapper;
+import com.vikas.lovable.repo.ProjectMemberRepo;
 import com.vikas.lovable.repo.ProjectRepository;
 import com.vikas.lovable.repo.UserRepository;
 import com.vikas.lovable.service.ProjectService;
@@ -27,6 +31,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final ProjectMapper projectMapper;
+    private final ProjectMemberRepo projectMemberRepo;
 
     @Override
     @Transactional
@@ -34,9 +39,18 @@ public class ProjectServiceImpl implements ProjectService {
         User owner=userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User",userId.toString()));
         Project project=Project.builder()
                 .name(request.name())
-                .owner(owner)
                 .build();
         project=projectRepository.save(project);
+        ProjectMemberId projectMemberId=new ProjectMemberId(project.getId(), owner.getId());
+        ProjectMember projectMember=ProjectMember.builder()
+                .project(project)
+                .user(owner)
+                .role(ProjectRole.OWNER)
+                .acceptedAt(LocalDateTime.now())
+                .invitedAt(LocalDateTime.now())
+                .id(projectMemberId)
+                .build();
+        projectMemberRepo.save(projectMember);
         return projectMapper.toProjectResponse(project);
     }
 
@@ -66,9 +80,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public void deleteProject(Long id, Long userId) {
         Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow(()->new ResourceNotFoundException("Project",id.toString()));
-        if(!Objects.equals(project.getOwner().getId(), userId)){
-            throw new RuntimeException("You are not allowed to delete");
-        }
+
         project.setDeletedAt(LocalDateTime.now());
         projectRepository.save(project);
 
