@@ -7,6 +7,7 @@ import com.vikas.lovable.dto.auth.SignupRequest;
 import com.vikas.lovable.dto.auth.UserProfileResponse;
 import com.vikas.lovable.service.AuthService;
 import com.vikas.lovable.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,12 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> signup(@RequestBody SignupRequest request){
+    public ResponseEntity<AuthResponse> signup(@RequestBody @Valid SignupRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signup(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request){
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.login(request));
 
     }

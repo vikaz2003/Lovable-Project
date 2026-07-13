@@ -5,6 +5,7 @@ import com.vikas.lovable.dto.project.ProjectResponse;
 import com.vikas.lovable.dto.project.ProjectSummaryResponse;
 import com.vikas.lovable.entity.Project;
 import com.vikas.lovable.entity.User;
+import com.vikas.lovable.error.ResourceNotFoundException;
 import com.vikas.lovable.mapper.ProjectMapper;
 import com.vikas.lovable.repo.ProjectRepository;
 import com.vikas.lovable.repo.UserRepository;
@@ -30,7 +31,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public ProjectResponse createProject(ProjectRequest request, Long userId) {
-        User owner=userRepository.findById(userId).orElseThrow();
+        User owner=userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User",userId.toString()));
         Project project=Project.builder()
                 .name(request.name())
                 .owner(owner)
@@ -46,14 +47,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectResponse getUserProjectById(Long userId, Long id) {
-        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow();
+        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow(()->new ResourceNotFoundException("Project",id.toString()));
         return projectMapper.toProjectResponse(project);
     }
 
     @Override
     @Transactional
     public ProjectResponse updateProject(Long id, Long userId, ProjectRequest request) {
-        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow();
+        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow(()->new ResourceNotFoundException("Project",id.toString()));
         project.setName(request.name());
         project=projectRepository.save(project);
         return projectMapper.toProjectResponse(project);
@@ -64,7 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void deleteProject(Long id, Long userId) {
-        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow();
+        Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow(()->new ResourceNotFoundException("Project",id.toString()));
         if(!Objects.equals(project.getOwner().getId(), userId)){
             throw new RuntimeException("You are not allowed to delete");
         }

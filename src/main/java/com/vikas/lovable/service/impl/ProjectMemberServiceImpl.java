@@ -8,6 +8,7 @@ import com.vikas.lovable.entity.Project;
 import com.vikas.lovable.entity.ProjectMember;
 import com.vikas.lovable.entity.ProjectMemberId;
 import com.vikas.lovable.entity.User;
+import com.vikas.lovable.error.ResourceNotFoundException;
 import com.vikas.lovable.mapper.ProjectMemberMapper;
 import com.vikas.lovable.repo.ProjectMemberRepo;
 import com.vikas.lovable.repo.ProjectRepository;
@@ -110,6 +111,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     //Internal Function
     public Project getAccessibleProjectById(Long projectId,Long userId){
-        return projectRepository.findAccessibleProjectById(projectId,userId).orElseThrow();
+        return projectRepository.findAccessibleProjectById(projectId,userId).orElseThrow(()-> new ResourceNotFoundException("Project with Owner as User",(projectId.toString()+" "+userId.toString())));
     }
 }
