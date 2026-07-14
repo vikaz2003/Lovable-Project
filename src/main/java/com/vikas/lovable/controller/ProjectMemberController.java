@@ -5,6 +5,7 @@ import com.vikas.lovable.dto.member.InviteMemberRequest;
 import com.vikas.lovable.dto.member.MemberResponse;
 import com.vikas.lovable.dto.member.UpdateMemberRoleRequest;
 import com.vikas.lovable.entity.ProjectMember;
+import com.vikas.lovable.security.AuthUtil;
 import com.vikas.lovable.service.ProjectMemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +21,11 @@ import java.util.List;
 public class ProjectMemberController {
 
     private final ProjectMemberService projectMemberService;
+    private final AuthUtil authUtil;
 
     @GetMapping
     public ResponseEntity<List<MemberResponse>> getProjectMembers(@PathVariable Long projectId) {
-        Long userId = 1L;
+        Long userId= authUtil.getCurrentUserId();
         return ResponseEntity.ok(projectMemberService.getProjectMembers(projectId, userId));
     }
 
@@ -32,7 +34,7 @@ public class ProjectMemberController {
             @PathVariable Long projectId,
             @RequestBody  @Valid InviteMemberRequest request
     ) {
-        Long userId = 1L;
+        Long userId= authUtil.getCurrentUserId();
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 projectMemberService.inviteMember(projectId, request, userId)
         );
@@ -44,7 +46,7 @@ public class ProjectMemberController {
             @PathVariable Long memberId,
             @RequestBody @Valid UpdateMemberRoleRequest request
     ) {
-        Long userId = 1L;
+        Long userId= authUtil.getCurrentUserId();
         return ResponseEntity.ok(projectMemberService.updateMemberRole(projectId, memberId, request, userId));
     }
 
@@ -53,7 +55,7 @@ public class ProjectMemberController {
             @PathVariable Long projectId,
             @PathVariable Long memberId
     ) {
-        Long userId = 1L;
+        Long userId= authUtil.getCurrentUserId();
         projectMemberService.deleteProjectMember(projectId, memberId, userId);
         return ResponseEntity.noContent().build();
     }

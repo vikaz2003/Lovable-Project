@@ -26,6 +26,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
@@ -34,9 +35,8 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMemberRepo projectMemberRepo;
 
     @Override
-    @Transactional
     public ProjectResponse createProject(ProjectRequest request, Long userId) {
-        User owner=userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User",userId.toString()));
+        User owner=userRepository.getReferenceById(userId);
         Project project=Project.builder()
                 .name(request.name())
                 .build();
