@@ -16,6 +16,7 @@ import com.vikas.lovable.repo.UserRepository;
 import com.vikas.lovable.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +61,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @PreAuthorize("@security.canViewProject(#id)")
     public ProjectResponse getUserProjectById(Long userId, Long id) {
         Project project=projectRepository.findAccessibleProjectById(userId,id).orElseThrow(()->new ResourceNotFoundException("Project",id.toString()));
         return projectMapper.toProjectResponse(project);
