@@ -8,7 +8,6 @@ public record  ProjectResponse(
         Long id,
         String name,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        UserProfileResponse owner
+        LocalDateTime updatedAt
 ) {
 }
